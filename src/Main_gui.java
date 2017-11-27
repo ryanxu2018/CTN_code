@@ -121,6 +121,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Tree;
 
 public class Main_gui {
   Display d;
@@ -129,15 +130,11 @@ public class Main_gui {
 
   Main_gui() {
     d = new Display();
-    s = new Shell(d,SWT.SHELL_TRIM);
+    s = new Shell(d,SWT.SHELL_TRIM | SWT.BORDER | SWT.RIGHT_TO_LEFT);
     s.setSize(400, 400);
-    
-    //setup the image display area 
-    Label imageField = new Label(s, SWT.NONE);
-    imageField.setBounds(0, 0, 400, 334);
     s.open();
     
-    s.setText("A MessageBox Example");
+    s.setText("CTN_GUI\n");
     //         create the menu system
     Menu m = new Menu(s, SWT.BAR);
     // create a file menu and add an exit item
