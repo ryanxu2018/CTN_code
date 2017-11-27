@@ -4,6 +4,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
@@ -24,16 +26,30 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 
 public class Main_gui {
-  Display d;
+  String path; 
+  public void setPath(String path) 
+  {
+	  this.path = path;
+  }
+  public String getPath() 
+  {
+	  return path;
+  }
+	
+	
+Display d;
 
   Shell s;
   private Text txtOutput;
 
   Main_gui() {
+	  //basic construct initialize the gui
     d = new Display();
-    s = new Shell(d,SWT.SHELL_TRIM | SWT.BORDER);
+    s = new Shell(d,SWT.DIALOG_TRIM | SWT.MIN | SWT.MAX);
     //auto quit the gui when red x pressed
     s.addListener(SWT.CLOSE, new Listener() 
     {
@@ -46,9 +62,6 @@ public class Main_gui {
     s.setSize(412, 400);
     GridLayout gl_s = new GridLayout(3, false);
     gl_s.horizontalSpacing = 3;
-    new Label(s, SWT.NONE);
-    new Label(s, SWT.NONE);
-    new Label(s, SWT.NONE);
     
     Tree tree = new Tree(s, SWT.BORDER | SWT.CHECK | SWT.FULL_SELECTION);
     GridData gd_tree = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
@@ -56,9 +69,36 @@ public class Main_gui {
     gd_tree.widthHint = 83;
     tree.setLayoutData(gd_tree);
     Label imageField = new Label(s, SWT.NONE);
-    GridData gd_lblNewLabel = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+    imageField.addControlListener(new ControlAdapter() {
+    	@Override
+    	public void controlResized(ControlEvent e) {
+    		
+    		  try 
+    	        {
+    			  	String selected = getPath();
+    	            Image image = SWTResourceManager.getImage(selected);
+    	            ImageData imgData = image.getImageData();
+    	            imgData = imgData.scaledTo(imageField.getBounds().width, imageField.getBounds().height);
+    	            ImageLoader imgLoader = new ImageLoader();
+    	            imgLoader.data = new ImageData[] {imgData};
+    	            imgLoader.save(selected, SWT.IMAGE_COPY);
+    	            imageField.setBounds(imageField.getBounds().x,imageField.getBounds().y,imageField.getBounds().width,
+    	            						imageField.getBounds().height);
+    	            imageField.setImage(SWTResourceManager.getImage(selected));
+    	            
+    	           	}
+    	        catch(Exception e1) 
+    	        {
+    	        	 System.out.println(e1);
+    	        }
+    	        
+    		
+    		System.out.println(e);
+    	}
+    });
+    GridData gd_lblNewLabel = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
     gd_lblNewLabel.widthHint = 186;
-    gd_lblNewLabel.heightHint = 211;
+    gd_lblNewLabel.heightHint = 261;
     imageField.setLayoutData(gd_lblNewLabel);
     
     txtOutput = new Text(s, SWT.BORDER);
@@ -115,15 +155,24 @@ btnNewButton.setText("Test");
         FileDialog fd = new FileDialog(s, SWT.OPEN);
         fd.setText("Open");
         fd.setFilterPath("C:/");
-        String[] filterExt = { "*.txt", "*.doc", ".rtf", "*.*" };
+        String[] filterExt = {  "*.*","*.txt", "*.doc", ".rtf"};
         fd.setFilterExtensions(filterExt);
         String selected = fd.open();
+        setPath(selected);
         System.out.println(selected);
         try 
         {
-            Image image = new Image(d, selected);
-            imageField.setImage(image);
-        	}
+            Image image = SWTResourceManager.getImage(selected);
+            ImageData imgData = image.getImageData();
+            imgData = imgData.scaledTo(imageField.getBounds().width, imageField.getBounds().height);
+            ImageLoader imgLoader = new ImageLoader();
+            imgLoader.data = new ImageData[] {imgData};
+            imgLoader.save(selected, SWT.IMAGE_COPY);
+            imageField.setBounds(imageField.getBounds().x,imageField.getBounds().y,imageField.getBounds().width,
+            						imageField.getBounds().height);
+            imageField.setImage(SWTResourceManager.getImage(selected));
+            
+           	}
         catch(Exception e) 
         {
         	 System.out.println(e);
@@ -141,9 +190,10 @@ btnNewButton.setText("Test");
         FileDialog fd = new FileDialog(s, SWT.SAVE);
         fd.setText("Save");
         fd.setFilterPath("C:/");
-        String[] filterExt = { "*.txt", "*.doc", ".rtf", "*.*" };
+        String[] filterExt = { "*.*", "*.txt", "*.doc", ".rtf" };
         fd.setFilterExtensions(filterExt);
         String selected = fd.open();
+        
         System.out.println(selected);
       }
 
@@ -166,7 +216,7 @@ btnNewButton.setText("Test");
     });
     s.setMenuBar(m);
     
-  
+ 
     
 
 
@@ -176,6 +226,7 @@ btnNewButton.setText("Test");
     }
     d.dispose();
   }
+  
 
   public static void main(String[] argv) {
     new Main_gui();
