@@ -1,109 +1,3 @@
-/*import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.layout.RowLayout;
-import swing2swt.layout.BorderLayout;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-
-import swing2swt.layout.BoxLayout;
-import org.eclipse.wb.swt.SWTResourceManager;
-
-public class Main_gui {
-
-	/**
-	 * Launch the application.
-	 * @param args
-	 
-
-		Display display = Display.getDefault();
-		Shell shell = new Shell();
-		shell.setSize(450, 300);
-		shell.setText("SWT Application");
-		shell.setLayout(null);
-		//set up the menu bar
-	    Menu menuBar = new Menu(shell, SWT.BAR);
-	    MenuItem cascadeFileMenu = new MenuItem(menuBar, SWT.CASCADE);
-	    cascadeFileMenu.setText("&File");
-	    Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
-	    cascadeFileMenu.setMenu(fileMenu);
-	    MenuItem openItem = new MenuItem(fileMenu,SWT.PUSH) ;
-	    MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
-	    MenuItem saveItem = new MenuItem(fileMenu, SWT.PUSH);
-	    openItem.setText("&New\tCTRL+0");
-	    openItem.setAccelerator(SWT.CTRL + '0');
-	    saveItem.setText("&Save\tCTRL+0");
-	    saveItem.setAccelerator(SWT.CTRL+'S');
-	    
-	    exitItem.setText("&Exit");
-	    shell.setMenuBar(menuBar);
-	     exitItem.addListener(SWT.Selection, event-> {
-	     shell.getDisplay().dispose();
-	           System.exit(0);
-	        });
-	     
-	     
-		
-		Button btnTest = new Button(shell, SWT.NONE);
-		btnTest.setBounds(153, 250, 60, 28);
-		btnTest.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
-		btnTest.setText("TEST");
-		
-		Button btnReset = new Button(shell, SWT.NONE);
-		btnReset.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
-		btnReset.setGrayed(true);
-		btnReset.setForeground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-		btnReset.setBounds(219, 250, 60, 28);
-		btnReset.setText("RESET");
-
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-	
-	class Open implements SelectionListener {
-	      public void widgetSelected(SelectionEvent event) {
-	        FileDialog fd = new FileDialog(s, SWT.OPEN);
-	        fd.setText("Open");
-	        fd.setFilterPath("C:/");
-	        String[] filterExt = { "*.txt", "*.doc", ".rtf", "*.*" };
-	        fd.setFilterExtensions(filterExt);
-	        String selected = fd.open();
-	        System.out.println(selected);
-	      }
-	      public void widgetDefaultSelected(SelectionEvent event) {
-	      }
-	    }
-	public static void main(String[] args) {
-		
-		new Main_gui();
-		
-	}
-
-}
-*/
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -111,8 +5,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -121,20 +17,82 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 
 public class Main_gui {
   Display d;
 
   Shell s;
+  private Text txtOutput;
 
   Main_gui() {
     d = new Display();
-    s = new Shell(d,SWT.SHELL_TRIM | SWT.BORDER | SWT.RIGHT_TO_LEFT);
-    s.setSize(400, 400);
+    s = new Shell(d,SWT.SHELL_TRIM | SWT.BORDER);
+    //auto quit the gui when red x pressed
+    s.addListener(SWT.CLOSE, new Listener() 
+    {
+    	   public void handleEvent(Event e)
+    	   {
+    		   s.setVisible(false);
+    	   }
+    	});
+   
+    s.setSize(412, 400);
+    GridLayout gl_s = new GridLayout(3, false);
+    gl_s.horizontalSpacing = 3;
+    new Label(s, SWT.NONE);
+    new Label(s, SWT.NONE);
+    new Label(s, SWT.NONE);
+    
+    Tree tree = new Tree(s, SWT.BORDER | SWT.CHECK | SWT.FULL_SELECTION);
+    GridData gd_tree = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
+    gd_tree.heightHint = 59;
+    gd_tree.widthHint = 83;
+    tree.setLayoutData(gd_tree);
+    Label imageField = new Label(s, SWT.NONE);
+    GridData gd_lblNewLabel = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+    gd_lblNewLabel.widthHint = 186;
+    gd_lblNewLabel.heightHint = 211;
+    imageField.setLayoutData(gd_lblNewLabel);
+    
+    txtOutput = new Text(s, SWT.BORDER);
+    txtOutput.setText("OUT_PUT");
+    GridData gd_txtOutput = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+    gd_txtOutput.widthHint = 106;
+    gd_txtOutput.heightHint = 16;
+    txtOutput.setLayoutData(gd_txtOutput);
+
+Button btnNewButton = new Button(s, SWT.NONE);
+btnNewButton.addSelectionListener(new SelectionAdapter() {
+	@Override
+	public void widgetSelected(SelectionEvent e) {
+	}
+});
+
+btnNewButton.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 1, 1));
+btnNewButton.setText("Test");
+    new Label(s, SWT.NONE);
+    
+    
+    Button btnNewButton_1 = new Button(s, SWT.NONE);
+    btnNewButton_1.addSelectionListener(new SelectionAdapter() {
+    	@Override
+    	public void widgetSelected(SelectionEvent e) {
+    	}
+    });
+    btnNewButton_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+    btnNewButton_1.setText("Reset");
+
+    s.setLayout(gl_s);
     s.open();
     
-    s.setText("CTN_GUI\n");
+    s.setText("CTN_GUI");
     //         create the menu system
     Menu m = new Menu(s, SWT.BAR);
     // create a file menu and add an exit item
@@ -207,6 +165,9 @@ public class Main_gui {
       }
     });
     s.setMenuBar(m);
+    
+  
+    
 
 
     while (!s.isDisposed()) {
@@ -220,4 +181,3 @@ public class Main_gui {
     new Main_gui();
   }
 }
-
